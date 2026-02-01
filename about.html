@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kephri Pins Order System</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins}
+body{background:#fce4ec;color:#333;scroll-behavior:smooth;}
+nav{position:fixed;top:0;width:100%;background:#e91e63;color:#fff;padding:15px 8%;display:flex;justify-content:space-between;align-items:center;z-index:1000}
+nav ul{display:flex;gap:25px;list-style:none}
+nav li{cursor:pointer;transition:0.3s}
+nav li:hover{color:#fce4ec}
+.hero{height:100vh;background:linear-gradient(rgba(0,0,0,.3),rgba(0,0,0,.3)),url('bg.jpg');background-size:cover;background-position:center;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8%;color:#fff;position:relative}
+.hero h1{margin-bottom:20px}
+.order-btn-home{position:absolute;bottom:50px;background:#e91e63;color:#fff;padding:15px 20px;border-radius:50px;cursor:pointer;border:none;font-size:16px;transition:0.3s}
+.order-btn-home:hover{background:#c2185b}
+section{padding:90px 8%}
+h2{text-align:center;margin-bottom:40px;color:#e91e63}
+.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px}
+.card{background:#fff;border-radius:15px;box-shadow:0 15px 30px rgba(233,30,99,.2);overflow:hidden;transition:0.3s;animation:fadeIn 0.5s ease-in}
+.card:hover{transform:translateY(-5px);box-shadow:0 20px 40px rgba(233,30,99,.3)}
+.card img{width:100%;height:180px;object-fit:cover;cursor:pointer}
+.card .info{padding:15px;text-align:center}
+.card h4{margin-bottom:5px;color:#333}
+.card .price{font-size:18px;font-weight:600;color:#e91e63;margin-bottom:10px}
+.card button{width:100%;margin-top:10px;padding:10px;border:none;border-radius:20px;background:#e91e63;color:#fff;cursor:pointer;transition:0.3s}
+.card button:hover{background:#c2185b}
+.image-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;z-index:3000}
+.image-modal img{max-width:90%;max-height:90%;object-fit:contain;border-radius:10px}
+.image-modal .close-modal{position:absolute;top:20px;right:20px;background:#fff;color:#e91e63;border:none;border-radius:50%;width:40px;height:40px;cursor:pointer;font-size:20px;transition:0.3s}
+.image-modal .close-modal:hover{background:#fce4ec}
+.about{display:flex;gap:30px;align-items:center;flex-wrap:wrap;background:#fff;padding:30px;border-radius:15px;box-shadow:0 10px 20px rgba(233,30,99,.1);animation:fadeIn 0.5s ease-in}
+.about img{width:300px;border-radius:20px}
+.about .content{flex:1}
+.about .content h3{margin-bottom:15px;color:#e91e63}
+.about .content p{margin-bottom:15px;line-height:1.6}
+.about .contact-info p{margin:5px 0;font-weight:500}
+.about .tagline{text-align:center;margin-top:20px;font-style:italic;color:#e91e63}
+.contact input,.contact textarea{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ddd;transition:0.3s}
+.contact input:focus,.contact textarea:focus{border-color:#e91e63;outline:none}
+.contact button{padding:12px 25px;background:#e91e63;color:#fff;border:none;border-radius:20px;cursor:pointer;transition:0.3s}
+.contact button:hover{background:#c2185b}
+.contact button:disabled{background:#ccc;cursor:not-allowed}
+.cart-btn{position:fixed;bottom:30px;right:30px;background:#e91e63;color:#fff;padding:15px 20px;border-radius:50px;cursor:pointer;transition:0.3s}
+.cart-btn:hover{background:#c2185b}
+.cart-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:2000}
+.cart-box{background:#fff;padding:25px;width:90%;max-width:400px;border-radius:15px;animation:fadeIn 0.3s ease-in}
+.cart-item{display:flex;gap:10px;align-items:center;margin:10px 0;position:relative}
+.cart-item img{width:50px;height:50px;object-fit:cover;border-radius:8px}
+.qty button{padding:2px 8px;cursor:pointer;border-radius:50%;background:#fce4ec;border:none}
+.remove-btn{position:absolute;top:0;right:0;background:#e91e63;color:#fff;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:12px}
+.close{text-align:right;cursor:pointer;color:#e91e63;font-size:20px}
+.checkout{width:100%;margin-top:15px;padding:12px;border:none;background:#e91e63;border-radius:20px;cursor:pointer;font-weight:600;transition:0.3s}
+.checkout:hover{background:#c2185b}
+.checkout:disabled{background:#ccc;cursor:not-allowed}
+.cart-box input{width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ddd}
+.save-btn{background:#e91e63;color:#fff;border:none;padding:8px 15px;border-radius:10px;cursor:pointer;margin-left:10px}
+.save-btn:hover{background:#c2185b}
+.clear-cart{background:#ff6b6b;color:#fff;border:none;padding:8px 15px;border-radius:10px;cursor:pointer;margin-top:10px}
+.clear-cart:hover{background:#ff5252}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid #fff;border-top:2px solid transparent;border-radius:50%;animation:spin 1s linear infinite;margin-left:10px}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.total-price{text-align:center;margin:10px 0;font-weight:600;color:#e91e63}
+.loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(233,30,99,.7);display:none;align-items:center;justify-content:center;z-index:3000;color:#fff;font-size:20px}
+</style>
+</head>
+<body>
+
+<nav>
+<h3>Kephri Pins</h3>
+<ul>
+<li onclick="go('home')">Home</li>
+<li onclick="go('menu')">Menu</li>
+<li onclick="go('about')">About</li>
+<li onclick="go('contact')">Contact</li>
+</ul>
+</nav>
+
+<div id="home" class="hero">
+<h1>WELCOME TO OUR STORE!!</h1>
+<button class="order-btn-home" onclick="go('menu')">Order Now</button>
+</div>
+
+<section id="menu">
+<h2>Menu</h2>
+<div class="menu">
+<div class="card">
+<img src="1.jpg" alt="PIN #1" onclick="openImageModal(this.src)">
+<div class="info">
+<h4>PIN #1</h4>
+<p class="price">php 35.00</p>
+<button onclick="addToCart('PIN #1',this.parentElement.previousElementSibling.src,35.00)">Add to Cart</button>
+</div>
+</div>
+<div class="card">
+<img src="2.jpg" alt="PIN #2" onclick="openImageModal(this.src)">
+<div class="info">
+<h4>PIN #2</h4>
+<p class="price">php 35.00</p>
+<button onclick="addToCart('PIN #2',this.parentElement.previousElementSibling.src,35.00)">Add to Cart</button>
+</div>
+</div>
+<div class="card">
+<img src="3.jpg" alt="PIN #3" onclick="openImageModal(this.src)">
+<div class="info">
+<h4>PIN #3</h4>
+<p class="price">php 40.00</p>
+<button onclick="addToCart('PIN #3',this.parentElement.previousElementSibling.src,40.00)">Add to Cart</button>
+</div>
+</div>
+<div class="card">
+<img src="4.jpg" alt="PIN #4" onclick="openImageModal(this.src)">
+<div class="info">
+<h4>PIN #4</h4>
+<p class="price">php 40.00</p>
+<button onclick="addToCart('PIN #4',this.parentElement.previousElementSibling.src,40.00)">Add to Cart</button>
+</div>
+</div>
+</div>
+</section>
+
+<section id="about">
+<h2>About Us</h2>
+<div class="about">
+<img src="PASTE_YOUR_IMAGE_URL_HERE" alt="Kephri Pins">
+<div class="content">
+<h3>GET IN TOUCH WITH US</h3>
+<div class="contact-info">
+<p>$ www.kephriPins.com</p><br>
+<p>$ +123-456-7890 call us!</p><br>
+<p>$ Brgy. Poblacion, Mangaldan, Pangasinan</p><br>
+<p>$ KephriPins98@gmail.com</p><br><br>
+</div>
+<h3>ABOUT US</h3>
+<p>$ Kephri Pins creates stylish hairpins with built-in QR codes that link directly to our website for easy and convenient purchasing. With just one scan, customers can explore and buy our products instantly. Our pins combine fashion, innovation, and purpose—because even small accessories can make a big difference.</p>
+<div class="tagline">
+<p>Pin It, Scan It</p>
+<p><strong>KEPHRI PINS</strong></p>
+<p>$ Held together by a hairpin and confidence</p>
+</div>
+</div>
+</div>
+</section>
+
+<section id="contact" class="contact">
+<h2>Contact Us</h2>
+<input id="cname" placeholder="Your Name">
+<textarea id="cmsg" placeholder="Your Message"></textarea>
+<button id="sendBtn" onclick="sendContact()">Send Message</button>
+</section>
+
+<div class="cart-btn" onclick="openCart()">🛒 Cart (<span id="count">0</span>)</div>
+
+<div class="cart-modal" id="cart">
+<div class="cart-box">
+<div class="close" onclick="closeCart()">✖</div>
+<h3>Your Order</h3>
+<div id="items">No items</div>
+<div class="total-price">Total: php <span id="total">0.00</span></div>
+<button class="clear-cart" onclick="clearCart()">Clear Cart</button>
+<input id="orderName" placeholder="Your Name (Required)">
+<input id="orderPhone" placeholder="Phone Number (Required)">
+<div style="display:flex;align-items:center">
+<input id="address" placeholder="Delivery Address (Required)">
+<button class="save-btn" onclick="saveAddress()">Save Address</button>
+</div>
+<button id="checkoutBtn" class="checkout" onclick="checkout()">Order Now</button>
+</div>
+</div>
+
+<div class="image-modal" id="imageModal">
+<button class="close-modal" onclick="closeImageModal()">×</button>
+<img id="modalImage" src="" alt="Full Image">
+</div>
+
+<div class="loading-overlay" id="loading">Sending...</div>
+
+<script>
+const BOT_TOKEN = "8479598986:AAGF6GJA09DxhvLleeBVX1Bgk7S_sngoCSM";
+const ORDER_CHAT_ID = "-1003632760379";
+const CONTACT_CHAT_ID = "-1003632760379";
+
+let cart = {};
+let isSending = false;
+
+function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+function addToCart(name,img,price){if(!name||!img||!price)return;if(!cart[name]){cart[name]={qty:1,img,price}}else{cart[name].qty++}update();}
+function update(){let html="",count=0,total=0;for(let i in cart){count+=cart[i].qty;total+=cart[i].qty*cart[i].price;html+=`<div class="cart-item"><img src="${cart[i].img}"><span>${i} - $${cart[i].price.toFixed(2)}</span><div class="qty"><button onclick="change('${i}',-1)">-</button>${cart[i].qty}<button onclick="change('${i}',1)">+</button></div><button class="remove-btn" onclick="removeItem('${i}')">×</button></div>`}document.getElementById("items").innerHTML=html||"No items";document.getElementById("count").innerText=count;document.getElementById("total").innerText=total.toFixed(2);const savedAddr=localStorage.getItem("savedAddress");if(savedAddr)document.getElementById("address").value=savedAddr;}
+function change(i,v){if(!cart[i])return;cart[i].qty+=v;if(cart[i].qty<=0)delete cart[i];update();}
+function removeItem(i){delete cart[i];update();}
+function clearCart(){cart={};update();}
+function openCart(){document.getElementById("cart").style.display="flex";}
+function closeCart(){document.getElementById("cart").style.display="none";}
+function saveAddress(){const addr=document.getElementById("address").value.trim();if(addr){localStorage.setItem("savedAddress",addr);alert("Address saved!");}else{alert("Enter an address first.");}}
+function openImageModal(src){document.getElementById("modalImage").src=src;document.getElementById("imageModal").style.display="flex";}
+function closeImageModal(){document.getElementById("imageModal").style.display="none";}
+document.addEventListener("keydown",(e)=>{if(e.key==="Escape")closeImageModal();});
+document.getElementById("imageModal").addEventListener("click",(e)=>{if(e.target===document.getElementById("imageModal"))closeImageModal();});
+
+function checkout(){
+if(isSending)return;
+const name=document.getElementById("orderName").value.trim();
+const phone=document.getElementById("orderPhone").value.trim();
+const addr=document.getElementById("address").value.trim();
+if(!name||!phone||!addr){alert("Name, phone, and address are required!");return;}
+if(Object.keys(cart).length===0){alert("Your cart is empty!");return;}
+if(!confirm("Confirm your order?"))return;
+
+isSending=true;
+const btn=document.getElementById("checkoutBtn");
+btn.disabled=true;btn.innerHTML="Sending... <div class='spinner'></div>";
+document.getElementById("loading").style.display="flex";
+
+let msg=`🛒 NEW ORDER\n\nName: ${name}\nPhone: ${phone}\n`;
+for(let i in cart){msg+=`${i} x ${cart[i].qty} = $${(cart[i].qty*cart[i].price).toFixed(2)}\n`}
+msg+=`\nTotal: $${document.getElementById("total").innerText}\n📍 Address:\n${addr}`;
+
+sendTelegram(msg,ORDER_CHAT_ID).then(()=>{
+alert("Thank you for your order.");
+cart={};
+update();
+closeCart();
+}).catch(err=>{console.error("Order send error:",err);alert("Failed to order. "+err.message);}).finally(()=>{
+isSending=false;
+btn.disabled=false;
+btn.innerHTML="Order Now";
+document.getElementById("loading").style.display="none";
+});
+}
+
+function sendContact(){
+if(isSending)return;
+const name=document.getElementById("cname").value.trim();
+const message=document.getElementById("cmsg").value.trim();
+if(!name||!message){alert("Name and message are required!");return;}
+if(!confirm("Send this message?"))return;
+
+isSending=true;
+const btn=document.getElementById("sendBtn");
+btn.disabled=true;btn.innerHTML="Sending... <div class='spinner'></div>";
+document.getElementById("loading").style.display="flex";
+
+let msg=`📩 CONTACT\nName: ${name}\nMessage: ${message}`;
+sendTelegram(msg,CONTACT_CHAT_ID).then(()=>{alert("Message sent!");document.getElementById("cname").value="";document.getElementById("cmsg").value="";})
+.catch(err=>{console.error("Contact send error:",err);alert("Failed to send message. "+err.message);})
+.finally(()=>{isSending=false;btn.disabled=false;btn.innerHTML="Send Message";document.getElementById("loading").style.display="none";});
+}
+
+async function sendTelegram(msg,chatId){
+const url=`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+const data={chat_id:chatId,text:msg,parse_mode:"HTML"};
+const res=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+const result=await res.json();
+if(!result.ok)throw new Error(result.description);
+return result;
+}
+
+window.addEventListener("load",update);
+</script>
+
+</body>
+</html>
